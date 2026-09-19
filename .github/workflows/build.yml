@@ -19,25 +19,21 @@ jobs:
 
       - name: Extract project
         run: |
-          rm -rf extracted
-          mkdir extracted
-          unzip -q dhaki-project.zip -d extracted
-          cp -r extracted/. .
-          rm -rf extracted
+          unzip -q dhaki-project.zip -d .
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          distribution: 'temurin'
           java-version: '17'
 
       - name: Setup Android SDK
         run: |
-          echo "ANDROID_HOME=/usr/local/lib/android/sdk" >> "$GITHUB_ENV"
-          echo "ANDROID_SDK_ROOT=/usr/local/lib/android/sdk" >> "$GITHUB_ENV"
-          echo "/usr/local/lib/android/sdk/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
-          echo "/usr/local/lib/android/sdk/platform-tools" >> "$GITHUB_PATH"
-          echo "/usr/local/lib/android/sdk/build-tools/35.0.0" >> "$GITHUB_PATH"
+          echo "ANDROID_HOME=/usr/local/lib/android/sdk" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=/usr/local/lib/android/sdk" >> $GITHUB_ENV
+          echo "/usr/local/lib/android/sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          echo "/usr/local/lib/android/sdk/platform-tools" >> $GITHUB_PATH
+          echo "/usr/local/lib/android/sdk/build-tools/35.0.0" >> $GITHUB_PATH
 
       - name: Accept Android licenses
         run: |
@@ -55,12 +51,12 @@ jobs:
           gradle-version: '8.9'
 
       - name: Build APK
-        run: |
-          gradle assembleDebug --no-daemon
+        working-directory: ./dhaki-project
+        run: gradle assembleDebug --no-daemon
 
       - name: Upload ذكي APK
         uses: actions/upload-artifact@v4
         with:
           name: dhaki-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: dhaki-project/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
